@@ -12,10 +12,9 @@ def logtime(format: str = "%Y-%m-%d %H_%M_%S"):
     """
     return datetime.datetime.now().strftime(format)
 
+
 # Establish a base path to where this file is
-BASE_PATH = os.path.dirname(
-        os.path.abspath(__file__)
-    )
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 # Name a logging directory
 LOG_PATH = os.path.join(BASE_PATH, "game_logs")
@@ -42,7 +41,8 @@ cchoice_hist = []
 timeplayed = []
 
 # valid choices for user input and computer selection
-valid_choices = ['R', 'P', 'S']
+valid_choices = ["R", "P", "S"]
+
 
 def test_randoms(N: int = 1000) -> dict:
     cchoice = {key: 0 for key in valid_choices}
@@ -51,7 +51,7 @@ def test_randoms(N: int = 1000) -> dict:
         cchoice[comp_choice] += 1
 
     for key in cchoice:
-        cchoice[key] = cchoice[key]/N
+        cchoice[key] = cchoice[key] / N
 
     return cchoice
 
@@ -61,3 +61,43 @@ with open(os.path.join(LOG_PATH, f"gamelog_{logtime()}.txt"), "w") as f:
     f.write(f'{"-"*20}\n')
     f.write(f"{test_randoms()}\n\n")
     f.write("END OF TESTING")
+
+
+victory_matrix = {
+    "S": {
+        "R": 1,
+        "S": 0,
+        "P": -1,
+    },
+    "R": {
+        "R": 0,
+        "S": -1,
+        "P": 1,
+    },
+    "P": {
+        "R": -1,
+        "S": 1,
+        "P": 0,
+    },
+}
+
+player_choice = input(f"What is your choice {valid_choices}: ").upper()
+
+
+def play_match(player_choice):
+    comp_choice = random.choice(valid_choices)
+
+    print(f"You have chosen {player_choice}")
+    if player_choice not in valid_choices:
+        print("You have chosen poorly. You lose. Read directions next time.")
+
+    elif victory_matrix[player_choice][comp_choice] > 0:
+        print("Computer beat you :(")
+
+    elif victory_matrix[player_choice][comp_choice] == 0:
+        print("You tied!")
+
+    else:
+        print("You win. The machines won't take over \U0001f600")
+
+play_match(player_choice)
